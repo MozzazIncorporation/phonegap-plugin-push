@@ -45,6 +45,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+import com.mozzaz.lifetiles.MainActivity;
+
 @SuppressLint("NewApi")
 public class FCMService extends FirebaseMessagingService implements PushConstants {
 
@@ -79,6 +81,17 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
         }
         for (Map.Entry<String, String> entry : message.getData().entrySet()) {
             extras.putString(entry.getKey(), entry.getValue());
+            if ((entry.getKey().toString()).equals("message")){
+                try {
+                    JSONObject messageData = new JSONObject(entry.getValue());
+                    String notificationType = messageData.getString("type");
+                    if (notificationType!=null && notificationType.equals("call")){
+                        startActivity(new Intent(this, MainActivity.class));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         if (extras != null && isAvailableSender(from)) {
